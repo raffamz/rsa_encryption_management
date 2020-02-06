@@ -1,0 +1,4 @@
+{
+  "test_handler.py::test_decrypt_handler": true,
+  "test_handler.py::test_encrypt_and_decrypt_handler": true
+}

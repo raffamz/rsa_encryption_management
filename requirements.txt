@@ -1,0 +1,3 @@
+PyCryptodome
+boto3
+pytest

@@ -1,0 +1,59 @@
+service: authorizers-api
+
+provider:
+  name: aws
+  runtime: python3.6
+
+functions:
+
+  key_generation:
+    handler:  handler.key_generation_handler
+    events:
+      - http:
+          path: key-generation
+          method: post
+          cors: true
+  
+  encrypt:
+    handler:  handler.encrypt_handler
+    events:
+      - http:
+          path: encrypt
+          method: post
+
+custom:
+  dynamodb:
+  # If you only want to use DynamoDB Local in some stages, declare them here
+    stages:
+      - dev
+    start:
+      migrate: true
+    # Uncomment only if you already have a DynamoDB running locally
+    # noStart: true
+    pythonRequirements:
+      dockerizePip: non-linux
+
+
+resources:
+  Resources:
+    TodosDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: applicationId
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: applicationId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: application-key-management
+
+plugins:
+  - serverless-offline-python
+  - serverless-dynamodb-local
+  - serverless-python-requirements
